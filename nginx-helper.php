@@ -278,8 +278,7 @@ namespace rtCamp\WP\Nginx {
 			$timestamps = "\n<!--" .
 					"Cached using Nginx-Helper on " . current_time( 'mysql' ) . ". " .
 					"It took " . get_num_queries() . " queries executed in " . timer_stop() . " seconds." .
-					"-->\n" .
-					"<!--Visit http://wordpress.org/extend/plugins/nginx-helper/faq/ for more details-->";
+					"-->\n";
 			echo $timestamps;
 		}
 
