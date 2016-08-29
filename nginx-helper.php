@@ -334,7 +334,7 @@ namespace rtCamp\WP\Nginx {
 namespace {
 
 	if ( !defined( 'RT_WP_NGINX_HELPER_CACHE_PATH' ) ) {
-		define( 'RT_WP_NGINX_HELPER_CACHE_PATH', '/var/run/nginx-cache' );
+		define( 'RT_WP_NGINX_HELPER_CACHE_PATH', '/var/cache/nginx' );
 	}
 	global $current_blog;
 
