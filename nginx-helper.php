@@ -276,7 +276,7 @@ namespace rtCamp\WP\Nginx {
 			if ( defined( 'WP_CLI' ) && WP_CLI )
 				return;
 			$timestamps = "\n<!--" .
-					"Cached using Nginx-Helper on " . current_time( 'mysql' ) . ". " .
+					"Cached on " . current_time( 'mysql' ) . ". " .
 					"It took " . get_num_queries() . " queries executed in " . timer_stop() . " seconds." .
 					"-->\n";
 			echo $timestamps;
