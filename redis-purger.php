@@ -109,7 +109,6 @@ namespace rtCamp\WP\Nginx {
 			$this->log( "Function purgePost BEGIN ===" );
 
 			if ( $rt_wp_nginx_helper->options['purge_homepage_on_edit'] == 1 ) {
-				$this->log( "Purging homepage '$homepage_url'" );
 				$this->_purge_homepage();
 			}
 
@@ -212,13 +211,19 @@ namespace rtCamp\WP\Nginx {
 		function purgeUrl( $url, $feed = true )
 		{
 			global $rt_wp_nginx_helper;
-
+			
+			$url = trailingslashit( $url );
+			
 			$this->log( "- Purging URL | " . $url );
-
+			
 			$parse = parse_url( $url );
+			
 			$host = $rt_wp_nginx_helper->options['redis_hostname'];
+			
 			$prefix = $rt_wp_nginx_helper->options['redis_prefix'];
+			
 			$_url_purge_base = $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'];
+			
 			delete_single_key( $_url_purge_base );
         }
 
@@ -667,12 +672,22 @@ namespace rtCamp\WP\Nginx {
 		function true_purge_all()
 		{
 			global $rt_wp_nginx_helper;
-			$prefix = substr($rt_wp_nginx_helper->options['redis_prefix'],0, -1);
-			$this->log( "* * * * *" );
-			$this->log( "* Purged Everything!" );
-			$this->log( "* * * * *" );
-			//delete_multi_keys("*");
-			delete_keys_by_wildcard($prefix."*");
+			$prefix = trim( $rt_wp_nginx_helper->options['redis_prefix'] );
+			
+			$this->log( '* * * * *' );
+			
+			// If Purge Cache link click from network admin then purge all
+			if( is_network_admin() ) {
+				delete_keys_by_wildcard( $prefix . '*' );
+				$this->log( '* Purged Everything! * ' );
+			} else { // Else purge only site specific cache
+				$parse = wp_parse_url( get_site_url() );
+				$parse['path'] = empty( $parse['path'] ) ? '/' : $parse['path'];
+				delete_keys_by_wildcard( $prefix . $parse['scheme'] . 'GET' . $parse['host'] . $parse['path'] . '*' );
+				$this->log( '* ' . get_site_url() . ' Purged! * ' );
+			}
+			
+			$this->log( '* * * * *' );
 		}
 		
 		function purge_urls()
@@ -712,7 +727,7 @@ namespace rtCamp\WP\Nginx {
 						}
 					}
 				}
-                        }
+			}
 		}
 		
 	}
